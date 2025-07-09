@@ -8,9 +8,18 @@ use crate::event::Event;
 use crate::notification::{Notification, NotificationLevel};
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use futures::StreamExt;
+use std::process::Command;
 use tokio::sync::mpsc::UnboundedSender;
 
 use tui_input::backend::crossterm::EventHandler;
+
+fn update_dwmblocks() {
+    let _ = Command::new("sh")
+        .arg("-c")
+        .arg("pkill -SIGRTMIN+3 dwmblocks")
+        .output()
+        .ok();
+}
 
 pub async fn handle_key_events(
     key_event: KeyEvent,
@@ -338,6 +347,7 @@ pub async fn handle_key_events(
                                                                         NotificationLevel::Info,
                                                                         sender.clone(),
                                                                     );
+                                                                            update_dwmblocks();
                                                                         }
                                                                         Err(e) => {
                                                                             let _ = Notification::send(
@@ -356,6 +366,7 @@ pub async fn handle_key_events(
                                                                         NotificationLevel::Info,
                                                                         sender.clone(),
                                                                     );
+                                                                            update_dwmblocks();
                                                                         }
                                                                         Err(e) => {
                                                                             let _ = Notification::send(
